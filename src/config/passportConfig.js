@@ -22,7 +22,6 @@ passport.use(new FacebookStrategy({
     callbackURL: 'http://localhost:3004/auth/facebook/callback',
     profileFields: ['id', 'displayName', 'photos', 'email']
 }, (accessToken, refreshToken, profile, done) => {
-    // Ici tu peux gérer l'utilisateur (sauvegarder, chercher en BDD, etc.)
     return done(null, profile);
 }));
 

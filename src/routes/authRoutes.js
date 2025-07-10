@@ -4,24 +4,18 @@ const axios = require('axios');
 const jwt = require('jsonwebtoken');
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'default-secret'; // à sécuriser
+const JWT_SECRET = process.env.JWT_SECRET ; 
 
-//  Démarrer l'auth Google
 router.get('/', passport.authenticate('openidconnect'));
 
-//  Callback après Google login
 router.get('/google/callback',
     passport.authenticate('openidconnect', { failureRedirect: '/' }),
     async (req, res) => {
         const profile = req.user;
-
-        // ✅ Récupération des infos utilisateur Google
         const email = profile.emails?.[0]?.value;
         const firstName = profile.name?.givenName;
         const lastName = profile.name?.familyName;
-
         try {
-            // ✅ Enregistrement (ou récupération) via le DB service
             const response = await axios.post('http://localhost:3001/api/users/oauth', {
                 email,
                 first_name: firstName,
@@ -30,8 +24,6 @@ router.get('/google/callback',
             });
 
             const user = response.data;
-
-            // ✅ Générer un JWT
            const token = jwt.sign(
         {
           id: user._id,
@@ -43,8 +35,6 @@ router.get('/google/callback',
         JWT_SECRET,
         { expiresIn: '7d' }
       );
-
-           
          res.redirect(`http://localhost:3000/auth/callback?token=${token}`);
 
         } catch (error) {
@@ -54,7 +44,6 @@ router.get('/google/callback',
     }
 );
 
-// 🔹 Auth Facebook (callback en attente d'intégration JWT)
 router.get('/facebook', passport.authenticate('facebook'));
 
 router.get('/facebook/callback',
@@ -64,7 +53,7 @@ router.get('/facebook/callback',
     }
 );
 
-// 🔒 Route protégée (test)
+// protected route
 router.get('/profile', (req, res) => {
     if (!req.isAuthenticated()) {
         return res.redirect('/auth');
@@ -72,7 +61,6 @@ router.get('/profile', (req, res) => {
     res.send(`<h1>Bienvenue ${req.user.displayName || req.user.name?.givenName}</h1> <a href="/auth/logout">Déconnexion</a>`);
 });
 
-// 🔓 Déconnexion
 router.get('/logout', (req, res) => {
     req.logout(() => {
         res.redirect('/');

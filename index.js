@@ -9,20 +9,17 @@ require('./src/config/passportConfig');
 
 const app = express();
 const register = new client.Registry();
-// Crée une métrique de type Counter
+
 const oauthRequestsCounter = new client.Counter({
   name: "oauth_requests_total",
   help: "Nombre total de requêtes sur le service OAuth",
   labelNames: ["method", "route", "status"]
 });
 
-// Enregistre la métrique dans le registre
 register.registerMetric(oauthRequestsCounter);
 
-// Collecte les métriques système par défaut
 client.collectDefaultMetrics({ register });
 
-// Middleware pour enregistrer chaque requête
 app.use((req, res, next) => {
   res.on("finish", () => {
     oauthRequestsCounter.inc({
@@ -35,7 +32,7 @@ app.use((req, res, next) => {
 });
 
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'secret',
+    secret: process.env.SESSION_SECRET ,
     resave: false,
     saveUninitialized: true
 }));
@@ -70,5 +67,5 @@ metricsApp.get("/metrics", async (req, res) => {
   res.send(await register.metrics());
 });
 metricsApp.listen(9104, () => {
-  console.log("📊 oauth service metrics exposed on http://localhost:9104/metrics");
+  console.log("oauth service metrics exposed on http://localhost:9104/metrics");
 });
