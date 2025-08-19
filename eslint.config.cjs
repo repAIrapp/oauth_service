@@ -1,5 +1,6 @@
 // eslint.config.cjs
 const js = require("@eslint/js");
+const globals = require("globals"); // 👈 ajoute ça
 
 /** @type {import('eslint').Linter.Config[]} */
 module.exports = [
@@ -10,7 +11,6 @@ module.exports = [
       ecmaVersion: "latest",
       sourceType: "commonjs",
       globals: {
-        // éviter no-undef pour Node
         process: "readonly",
         console: "readonly",
         module: "readonly",
@@ -23,12 +23,25 @@ module.exports = [
       "coverage/",
       "dist/",
       "build/",
-      // si tu as des uploads temporaires
       "uploads/",
     ],
     rules: {
-      // adapte si besoin
       "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+    },
+  },
+
+  // ✅ Override pour les tests (Jest)
+  {
+    files: ["tests/**/*.{js,cjs,mjs,ts}"],
+    languageOptions: {
+      // Déclare les globals Jest: describe, test, expect, jest, beforeEach, etc.
+      globals: {
+        ...globals.jest,
+      },
+    },
+    rules: {
+      // (optionnel) Des règles spécifiques aux tests
+      // "no-console": "off",
     },
   },
 ];
