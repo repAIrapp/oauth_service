@@ -6,7 +6,8 @@
     "start": "node src/index.js",
     "test": "jest",
     "dev": "nodemon src/index.js",
-    "lint": "eslint"
+    "lint": "eslint",
+     "build": "echo 'Pas de build nécessaire pour ce service'"
   },
   "author": "",
   "license": "ISC",
