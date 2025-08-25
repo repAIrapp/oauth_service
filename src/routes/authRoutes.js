@@ -2,6 +2,8 @@ const express = require('express');
 const passport = require('passport');
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
+const ensureAuth = require("../middlewares/ensureAuth");
+
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET ; 
@@ -54,12 +56,16 @@ router.get('/facebook/callback',
 );
 
 // protected route
-router.get('/profile', (req, res) => {
-    if (!req.isAuthenticated()) {
-        return res.redirect('/auth');
-    }
-    res.send(`<h1>Bienvenue ${req.user.displayName || req.user.name?.givenName}</h1> <a href="/auth/logout">Déconnexion</a>`);
+// router.get('/profile', (req, res) => {
+//     if (!req.isAuthenticated()) {
+//         return res.redirect('/auth');
+//     }
+//     res.send(`<h1>Bienvenue ${req.user.displayName || req.user.name?.givenName}</h1> <a href="/auth/logout">Déconnexion</a>`);
+// });
+router.get('/profile', ensureAuth, (req, res) => {
+  res.send(`<h1>Bienvenue ${req.user.displayName || req.user.name?.givenName}</h1> <a href="/auth/logout">Déconnexion</a>`);
 });
+
 
 router.get('/logout', (req, res) => {
     req.logout(() => {

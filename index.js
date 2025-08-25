@@ -4,12 +4,20 @@ const session = require('express-session');
 const passport = require('passport');
 const router = require('./src/routes/index');
 const client = require("prom-client");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 
 require('./src/config/passportConfig');
 
 const app = express();
 const register = new client.Registry();
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 const oauthRequestsCounter = new client.Counter({
   name: "oauth_requests_total",
   help: "Nombre total de requêtes sur le service OAuth",
@@ -20,6 +28,8 @@ register.registerMetric(oauthRequestsCounter);
 
 client.collectDefaultMetrics({ register });
 
+app.use(helmet());
+app.use(limiter);
 app.use((req, res, next) => {
   res.on("finish", () => {
     oauthRequestsCounter.inc({
