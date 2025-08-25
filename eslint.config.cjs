@@ -1,6 +1,5 @@
-// eslint.config.cjs
 const js = require("@eslint/js");
-const globals = require("globals"); // 👈 ajoute ça
+const globals = require("globals"); 
 
 /** @type {import('eslint').Linter.Config[]} */
 module.exports = [
@@ -30,17 +29,14 @@ module.exports = [
     },
   },
 
-  // ✅ Override pour les tests (Jest)
   {
     files: ["tests/**/*.{js,cjs,mjs,ts}"],
     languageOptions: {
-      // Déclare les globals Jest: describe, test, expect, jest, beforeEach, etc.
       globals: {
         ...globals.jest,
       },
     },
     rules: {
-      // (optionnel) Des règles spécifiques aux tests
       // "no-console": "off",
     },
   },

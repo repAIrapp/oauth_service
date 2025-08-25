@@ -1,4 +1,3 @@
-// tests/authroute.unit.test.js
 const express = require('express')
 const request = require('supertest')
 

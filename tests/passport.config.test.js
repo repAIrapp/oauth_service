@@ -1,5 +1,3 @@
-// tests/passport.config.test.js
-
 // Mocks stockés sur global pour éviter "out-of-scope" dans jest.mock()
 const passportUseMock = jest.fn();
 const serializeUserMock = jest.fn();
@@ -18,8 +16,6 @@ jest.mock('passport', () => ({
   deserializeUser: (fn) => global.__passportMocks.deserializeUser(fn),
 }));
 
-// ⚠️ Ton code fait: const OpenIDConnectStrategy = require('passport-openidconnect')
-// => on doit exporter directement un constructeur (pas { Strategy })
 jest.mock(
   'passport-openidconnect',
   () =>
@@ -29,7 +25,6 @@ jest.mock(
   { virtual: true }
 );
 
-// Ton code fait: require('passport-facebook').Strategy
 jest.mock(
   'passport-facebook',
   () => ({
@@ -50,7 +45,7 @@ describe('config/passportConfig', () => {
     jest.clearAllMocks();
     // IMPORTANT: charger la config après avoir posé les mocks
     jest.isolateModules(() => {
-      require('../src/config/passportConfig'); // ajuste si ton chemin diffère
+      require('../src/config/passportConfig'); 
     });
   });
 

@@ -56,12 +56,6 @@ router.get('/facebook/callback',
 );
 
 // protected route
-// router.get('/profile', (req, res) => {
-//     if (!req.isAuthenticated()) {
-//         return res.redirect('/auth');
-//     }
-//     res.send(`<h1>Bienvenue ${req.user.displayName || req.user.name?.givenName}</h1> <a href="/auth/logout">Déconnexion</a>`);
-// });
 router.get('/profile', ensureAuth, (req, res) => {
   res.send(`<h1>Bienvenue ${req.user.displayName || req.user.name?.givenName}</h1> <a href="/auth/logout">Déconnexion</a>`);
 });
